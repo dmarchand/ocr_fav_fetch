@@ -2,6 +2,7 @@ from lxml import html
 import requests
 import urllib
 import urllib2
+import argparse
 
 def download_mp3(url):
         file_name = url.split('/')[-1]
@@ -26,9 +27,16 @@ def download_mp3(url):
 
         f.close()
 
-page = requests.get('https://dl.dropboxusercontent.com/u/52921017/All%20Faves.html')
-tree = html.fromstring(page.content)
+parser = argparse.ArgumentParser(description="Download your ocremix favorites")
+parser.add_argument("-favs", nargs='+', help='Path to your favorites list')
 
+args = parser.parse_args()
+
+
+with open(args.favs[0], 'r') as f:
+	page = f.read()
+	
+tree = html.fromstring(page)
 names = tree.xpath('//td[4]/text()')
 
 for name in names:
